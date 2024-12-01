@@ -1,2 +1,3 @@
-from helpers import *
+import sys
+import helpers
 from copy import deepcopy
