@@ -1,6 +1,11 @@
 from helpers import *
 from copy import deepcopy
-with open("Day 1 input.txt", "r") as a:
+from pathlib import Path
+
+mod_path = Path(__file__).parent
+relative_path_1 = 'Day 1 input.txt'
+src_path_1 = (mod_path / relative_path_1).resolve()
+with open(src_path_1, "r") as a:
     input_lines = a.readlines()
 input_lines = [i.strip().split("   ") for i in input_lines]
 print(input_lines)

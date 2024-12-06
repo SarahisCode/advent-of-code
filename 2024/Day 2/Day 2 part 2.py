@@ -1,4 +1,9 @@
-with open("Day 2 input.txt", "r") as a:
+from pathlib import Path
+
+mod_path = Path(__file__).parent
+relative_path_1 = 'Day 2 input.txt'
+src_path_1 = (mod_path / relative_path_1).resolve()
+with open(src_path_1, "r") as a:
     input_lines = a.readlines()
 
 reports = [[int(j) for j in i.strip().split(" ")] for i in input_lines]
