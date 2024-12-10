@@ -18,9 +18,6 @@ def find_possible(nums, result):
         new_nums = [nums[0]*nums[1]] + nums[2:]
         if find_possible(new_nums, result):
             return True
-        new_nums = [int(str(nums[0])+str(nums[1]))] + nums[2:]
-        if find_possible(new_nums, result):
-            return True
         return False
 
 tot = 0
