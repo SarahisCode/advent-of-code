@@ -35,9 +35,9 @@ def valid(start, moves, keypad):
     return True
 
 path_lookup = {}
-def find_path(start, end, keypad):
+def find_paths(start, end, keypad):
     if start == end:
-        return "A"
+        return ["A"]
     if (start, end, keypad) in path_lookup.keys():
         return path_lookup[(start, end, keypad)]
     x_offset = end[0]-start[0]
@@ -58,7 +58,7 @@ def find_path(start, end, keypad):
         possible = [x_moves+y_moves]
     else:
         if y_offset < 0 and valid(start, y_moves+x_moves, keypad):
-            return y_moves+x_moves
+            possible = [y_moves+x_moves]
         else:
             possible = [x_moves+y_moves, y_moves+x_moves]#assumption
 
@@ -66,8 +66,8 @@ def find_path(start, end, keypad):
     for route in possible:
         if valid(start, route, keypad):
             new_possible.append("".join(route)+"A")
-    path_lookup[(start, end, keypad)] = new_possible[0]
-    return new_possible[0]
+    path_lookup[(start, end, keypad)] = new_possible
+    return new_possible
 
 
 num_keypad = ("789", "456", "123", " 0A")
@@ -83,26 +83,38 @@ for line in input_lines:
     current_moves = []
     to_visit_names = "A"+line.strip()#adding A because the robot starts at A
     to_visit_positions = [find_index(i, num_keypad) for i in to_visit_names]
-    path = ""
+    path_choices = [""]
     for pointer in range(len(to_visit_positions)-1):
         start = to_visit_positions[pointer]
         end = to_visit_positions[pointer+1]
-        to_add = find_path(start, end, num_keypad)
-        path = path + to_add
-    for i in range(25):
-        print(i, len(path))
+        to_add = find_paths(start, end, num_keypad)
+        new_path_choices = []
+        for add_path in to_add:
+            for path in path_choices:
+                new_path_choices.append(path + add_path)
+        path_choices = list.copy(new_path_choices)
+    print(path_choices)
+    for _ in range(3):
         all_path_choices = []
-        prev_layer_path = path
-        to_visit_names = "A"+prev_layer_path#adding A because the robot starts at A
-        to_visit_positions = [dir_positions[i] for i in to_visit_names]
-        this_path = ""
-        for pointer in range(len(to_visit_positions)-1):
-            start = to_visit_positions[pointer]
-            end = to_visit_positions[pointer+1]
-            to_add = find_path(start, end, dir_keypad)
-            this_path = this_path+to_add
-        path = this_path
-    min_len = len(path)
+        for prev_layer_path in path_choices:
+            to_visit_names = "A"+prev_layer_path#adding A because the robot starts at A
+            to_visit_positions = [find_index(i, dir_keypad) for i in to_visit_names]
+            this_path_choices = [""]
+            for pointer in range(len(to_visit_positions)-1):
+                start = to_visit_positions[pointer]
+                end = to_visit_positions[pointer+1]
+                to_add = find_paths(start, end, dir_keypad)
+                new_path_choices = []
+                for add_path in to_add:
+                    for path in this_path_choices:
+                        new_path_choices.append(path + add_path)
+                this_path_choices = list.copy(new_path_choices)
+            print(prev_layer_path, set(len(path) for path in this_path_choices))
+            all_path_choices = all_path_choices + this_path_choices
+        print(set(len(path) for path in all_path_choices))
+        min_len = min(len(path) for path in all_path_choices)
+        path_choices = [all_path_choices[0]]
+    min_len = min(len(path) for path in path_choices)
     to_enter_num = int(line.strip()[:-1])
     to_add = to_enter_num*min_len
     ans += to_add
