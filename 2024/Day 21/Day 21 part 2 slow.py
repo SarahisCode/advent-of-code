@@ -57,11 +57,8 @@ def find_paths(start, end, keypad):
     if x_moves == "" or y_moves == "":
         possible = [x_moves+y_moves]
     else:
-        if y_offset < 0 and x_offset > 0:
-            possible = [y_moves+x_moves]
         #possible = permutations(x_moves+y_moves, abs(x_offset)+abs(y_offset)) #no assumption
-        else:
-            possible = [x_moves+y_moves, y_moves+x_moves]#assumption
+        possible = [x_moves+y_moves, y_moves+x_moves]#assumption
 
     new_possible = []
     for route in possible:
@@ -95,7 +92,7 @@ for line in input_lines:
                 new_path_choices.append(path + add_path)
         path_choices = list.copy(new_path_choices)
     print(path_choices)
-    for _ in range(3):
+    for _ in range(2):
         all_path_choices = []
         for prev_layer_path in path_choices:
             to_visit_names = "A"+prev_layer_path#adding A because the robot starts at A
@@ -110,11 +107,9 @@ for line in input_lines:
                     for path in this_path_choices:
                         new_path_choices.append(path + add_path)
                 this_path_choices = list.copy(new_path_choices)
-            print(prev_layer_path, set(len(path) for path in this_path_choices))
             all_path_choices = all_path_choices + this_path_choices
         print(set(len(path) for path in all_path_choices))
-        min_len = min(len(path) for path in all_path_choices)
-        path_choices = [path for path in all_path_choices if len(path) == min_len]
+        path_choices = list.copy(all_path_choices)
     min_len = min(len(path) for path in path_choices)
     to_enter_num = int(line.strip()[:-1])
     to_add = to_enter_num*min_len
